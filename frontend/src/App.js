@@ -7,7 +7,7 @@ function App() {
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
-    axios.get('http://localhost:5000/api/artisans')
+    axios.get('artisans.alwaysdata.net')
       .then(res => setArtisans(res.data))
       .catch(err => console.error(err));
   }, []);
