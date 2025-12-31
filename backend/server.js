@@ -1,43 +1,55 @@
 const express = require('express');
+const mysql = require('mysql2');
 const cors = require('cors');
-const { Sequelize, DataTypes } = require('sequelize');
 
 const app = express();
+
+// Autorise ton futur site web à interroger ce serveur
 app.use(cors());
 app.use(express.json());
 
-const sequelize = new Sequelize('artisans_db', 'artisans', 'Hajimenoippo67!!!', {
-  host: 'mysql-artisans.alwaysdata.net',
-  dialect: 'mysql',
-  logging: false,
+// CONFIGURATION CONNEXION ALWAYSDATA
+const db = mysql.createConnection({
+    host: 'mysql-adriendevweb.alwaysdata.net', // Vérifie bien ton hôte Alwaysdata
+    user: 'artisans',                      // Ton nom d'utilisateur Alwaysdata
+    password: 'Hajimenoippo67!!!',             // METS TON VRAI MOT DE PASSE ICI
+    database: 'artisans_db'      // Le nom de ta base sur Alwaysdata
 });
 
-const Categorie = sequelize.define('Categorie', {
-    nom: { type: DataTypes.STRING, allowNull: false }
-}, { tableName: 'categories', timestamps: false });
-
-const Ville = sequelize.define('Ville', {
-    nom: { type: DataTypes.STRING, allowNull: false }
-}, { tableName: 'villes', timestamps: false });
-
-const Artisan = sequelize.define('Artisan', {
-    nom_entreprise: { type: DataTypes.STRING, allowNull: false },
-    description: { type: DataTypes.TEXT },
-    note: { type: DataTypes.DECIMAL(2, 1) },
-    id_categorie: { type: DataTypes.INTEGER },
-    id_ville: { type: DataTypes.INTEGER }
-}, { tableName: 'artisans', timestamps: false });
-
-Artisan.belongsTo(Categorie, { foreignKey: 'id_categorie' });
-Artisan.belongsTo(Ville, { foreignKey: 'id_ville' });
-
-app.get('/api/artisans', async (req, res) => {
-    try {
-        const artisans = await Artisan.findAll({ include: [Categorie, Ville] });
-        res.json(artisans);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
+db.connect((err) => {
+    if (err) {
+        console.error('❌ Erreur de connexion MariaDB:', err);
+        return;
     }
+    console.log('✅ Connecté à la base de données Alwaysdata');
 });
 
-app.listen(5000, () => console.log("✅ Serveur prêt sur le port 5000"));
+// ROUTE : Récupérer tous les artisans
+app.get('/api/artisans', (req, res) => {
+    const sql = `
+        SELECT artisans.*, categories.nom AS categorie_nom 
+        FROM artisans 
+        JOIN categories ON artisans.categorie_id = categories.id
+    `;
+    db.query(sql, (err, results) => {
+        if (err) return res.status(500).json(err);
+        res.json(results);
+    });
+});
+
+// ROUTE : Récupérer les catégories (pour ton menu de recherche)
+app.get('/api/categories', (req, res) => {
+    const sql = "SELECT * FROM categories";
+    db.query(sql, (err, results) => {
+        if (err) return res.status(500).json(err);
+        res.json(results);
+    });
+});
+
+// PORT DYNAMIQUE (Très important pour l'hébergement)
+// Alwaysdata fournit un port, sinon on utilise 5000 par défaut
+const PORT = process.env.PORT || 5000;
+
+app.listen(PORT, () => {
+    console.log(`🚀 Serveur démarré sur le port ${PORT}`);
+});
