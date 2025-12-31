@@ -1,15 +1,20 @@
-const { Sequelize } = require('sequelize');
+const mysql = require('mysql2');
 
-// Connexion base MySQL
-const sequelize = new Sequelize('artisan_db', 'root', '', {
+// Configuration de la connexion à la base de données
+// Remplace les valeurs par tes vrais identifiants si tu en as de spécifiques
+const connection = mysql.createConnection({
   host: 'localhost',
-  dialect: 'mysql',
-  logging: false, 
+  user: 'root',      // Ton nom d'utilisateur MySQL
+  password: '',      // Ton mot de passe (souvent vide sur local)
+  database: 'artisans_db' // Le nom de la base que tu as créée avec le script SQL
 });
 
-// Test de connexion
-sequelize.authenticate()
-  .then(() => console.log('✅ Connexion MySQL réussie !'))
-  .catch(err => console.error('❌ Impossible de se connecter à MySQL :', err));
+connection.connect((err) => {
+  if (err) {
+    console.error('Erreur de connexion à la base de données : ' + err.stack);
+    return;
+  }
+  console.log('Connecté à la base de données MySQL avec l\'identifiant ' + connection.threadId);
+});
 
-module.exports = sequelize;
+module.exports = connection;

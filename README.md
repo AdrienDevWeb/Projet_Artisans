@@ -1,30 +1,20 @@
-# Annuaire des Artisans - Projet Web
+# Projet "Trouve ton artisan" - Région Auvergne-Rhône-Alpes
 
-Ce projet est une application web permettant de consulter une liste d'artisans classés par catégories.
+Ce projet est une plateforme web permettant de consulter la liste des artisans de la région, de les filtrer par catégorie (Bâtiment, Services, Fabrication, Alimentation) ou par ville, et de consulter leurs fiches détaillées.
 
-## 🛠️ Technologies utilisées
-- **Frontend** : React.js, SASS
-- **Backend** : Node.js, Express
-- **Base de données** : MySQL via Sequelize ORM
+## Technologies utilisées
+- **Frontend** : React.js, Sass pour le stylisage
+- **Backend** : Node.js, Express.js
+- **Base de données** : MySQL (Architecture respectant les 3 premières formes normales)
 
-## 🚀 Installation
+## Installation et Lancement
 
-1. **Base de données** :
-   - Lancer XAMPP (Apache & MySQL).
-   - Créer une base de données nommée `artisan_db`.
-   - Importer le fichier SQL ou créer la table `specialites`.
+### 1. Base de données
+- Importez le fichier `backend/creation.sql` pour créer la structure.
+- Importez le fichier `backend/alimentation.sql` pour remplir les données.
 
-2. **Lancer le Backend** :
-   - `cd backend`
-   - `npm install`
-   - `node server.js`
-
-3. **Lancer le Frontend** :
-   - `cd frontend`
-   - `npm install`
-   - `npm start`
-
-## 📋 Fonctionnalités
-- Affichage dynamique des cartes artisans.
-- Filtrage par catégorie (Bâtiment, Services, etc.).
-- Bouton de contact avec alerte interactive.
+### 2. Backend
+```bash
+cd backend
+npm install
+npm start

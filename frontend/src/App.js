@@ -4,76 +4,79 @@ import './App.scss';
 
 function App() {
   const [artisans, setArtisans] = useState([]);
-  const [filter, setFilter] = useState('Tous');
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
-    
-    axios.get('http://localhost:5000/artisans')
+    axios.get('http://localhost:5000/api/artisans')
       .then(res => setArtisans(res.data))
-      .catch(err => console.error("Erreur de connexion :", err));
+      .catch(err => console.error(err));
   }, []);
 
-  const categories = ['Tous', 'Bâtiment', 'Services', 'Fabrication', 'Alimentation'];
-
-  
-  const filteredArtisans = filter === 'Tous' 
-    ? artisans 
-    : artisans.filter(a => {
-        const catMap = { 'Bâtiment': 1, 'Services': 2, 'Fabrication': 3, 'Alimentation': 4 };
-        return Number(a.specialite_id) === catMap[filter];
-      });
+  // Filtrage par nom ou catégorie
+  const filteredArtisans = artisans.filter(artisan =>
+    artisan.nom_entreprise.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    artisan.Categorie?.nom.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <div className="App">
-      <header className="header">
+      <header className="header-main">
         <div className="header-container">
-          {/* Logo cliquable pour réinitialiser le filtre */}
-          <button onClick={() => setFilter('Tous')} className="logo-btn">
-            <img src="/logo.png" alt="Logo" className="logo" />
-          </button>
-          
-          <h1 className="title">Annuaire des Artisans</h1>
-        </div>
-        
-        <div className="filters">
-          {categories.map(cat => (
-            <button 
-              key={cat} 
-              onClick={() => setFilter(cat)} 
-              className={filter === cat ? 'active' : ''}
-            >
-              {cat}
-            </button>
-          ))}
+          <div className="logo-box">
+            <img src="logo.png" alt="Logo" className="main-logo" />
+          </div>
+          <div className="title-box">
+            <h1>Annuaire des Artisans</h1>
+          </div>
+          <div className="spacer"></div>
         </div>
       </header>
 
-      <main className="artisan-list">
-        {filteredArtisans.length > 0 ? (
-          filteredArtisans.map(artisan => (
-            <div className="artisan-card" key={artisan.id}>
-              <h3>{artisan.nom}</h3>
-              <p className="city">📍 {artisan.ville || "Ville non renseignée"}</p>
-              <p className="description">{artisan.description || "Aucune description"}</p>
-              <button 
-                className="contact-btn" 
-                onClick={() => alert(`Demande de contact envoyée à ${artisan.nom}`)}
-              >
-                Contact
-              </button>
-            </div>
-          ))
-        ) : (
-          <p className="no-data">Chargement des données ou aucun résultat...</p>
-        )}
+      {/* Barre de Recherche */}
+      <section className="search-section">
+        <input 
+          type="text" 
+          placeholder="Rechercher un artisan ou une spécialité (ex: Bâtiment)..." 
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="search-bar"
+        />
+      </section>
+
+      <main className="content">
+        <div className="artisan-grid">
+          {filteredArtisans.map(artisan => (
+            <article key={artisan.id} className="artisan-card">
+              <div className="card-top">
+                <h2>{artisan.nom_entreprise}</h2>
+                <div className="badge">{artisan.Categorie?.nom}</div>
+              </div>
+              
+              <div className="card-body">
+                <p className="location">📍 {artisan.Ville?.nom}</p>
+                <p className="description">{artisan.description}</p>
+                <p className="rating">Note : <strong>{artisan.note} / 5</strong> ⭐</p>
+                
+                {/* Bouton cliquable qui ouvre le mail du client */}
+                <button 
+                  className="btn-contact"
+                  onClick={() => window.location.href = `mailto:contact@${artisan.nom_entreprise.toLowerCase().replace(/\s/g, '')}.fr`}
+                >
+                  Contacter l'artisan
+                </button>
+              </div>
+            </article>
+          ))}
+        </div>
       </main>
 
-      <footer className="footer">
-        <p>&copy; 2025 Annuaire Artisans Pro</p>
-        <div className="footer-links">
-          <a href="#mentions">Mentions Légales</a>
-          <a href="#cookies">Cookies</a>
-          <a href="#contact">Contact</a>
+      <footer className="footer-blue">
+        <div className="container">
+          <p>&copy; 2025 - Projet Annuaire des Artisans</p>
+          <div className="footer-links">
+            <a href="#">Mentions Légales</a>
+            <a href="#">Contact Support</a>
+          </div>
         </div>
       </footer>
     </div>

@@ -1,46 +1,43 @@
 const express = require('express');
 const cors = require('cors');
-const db = require('./db'); // Import de la connexion BDD que nous avons créée
+const { Sequelize, DataTypes } = require('sequelize');
 
 const app = express();
-
-// 1. SÉCURITÉ CORS : Configuration restrictive pour valider les critères de sécurité
-const corsOptions = {
-    // On autorise uniquement ton frontend local et ton futur site en ligne
-    origin: ['http://localhost:3000', 'https://ton-site-artisan.vercel.app'], 
-    methods: 'GET,POST,PUT,DELETE',
-    allowedHeaders: 'Content-Type,Authorization',
-    optionsSuccessStatus: 200
-};
-
-app.use(cors(corsOptions));
+app.use(cors());
 app.use(express.json());
 
-// 2. ROUTES API : Pour envoyer les données des artisans au Frontend
-
-// Route pour récupérer TOUS les artisans
-app.get('/api/artisans', (req, res) => {
-    const sql = "SELECT * FROM artisans";
-    db.query(sql, (err, results) => {
-        if (err) {
-            console.error("Erreur SQL:", err);
-            return res.status(500).json({ error: "Erreur lors de la récupération des données" });
-        }
-        res.json(results);
-    });
+const sequelize = new Sequelize('artisans_db', 'artisans', 'Hajimenoippo67!!!', {
+  host: 'mysql-artisans.alwaysdata.net',
+  dialect: 'mysql',
+  logging: false,
 });
 
-// Route pour récupérer un artisan spécifique par son ID
-app.get('/api/artisans/:id', (req, res) => {
-    const { id } = req.params;
-    db.query("SELECT * FROM artisans WHERE id = ?", [id], (err, result) => {
-        if (err) return res.status(500).send(err);
-        res.json(result[0]);
-    });
+const Categorie = sequelize.define('Categorie', {
+    nom: { type: DataTypes.STRING, allowNull: false }
+}, { tableName: 'categories', timestamps: false });
+
+const Ville = sequelize.define('Ville', {
+    nom: { type: DataTypes.STRING, allowNull: false }
+}, { tableName: 'villes', timestamps: false });
+
+const Artisan = sequelize.define('Artisan', {
+    nom_entreprise: { type: DataTypes.STRING, allowNull: false },
+    description: { type: DataTypes.TEXT },
+    note: { type: DataTypes.DECIMAL(2, 1) },
+    id_categorie: { type: DataTypes.INTEGER },
+    id_ville: { type: DataTypes.INTEGER }
+}, { tableName: 'artisans', timestamps: false });
+
+Artisan.belongsTo(Categorie, { foreignKey: 'id_categorie' });
+Artisan.belongsTo(Ville, { foreignKey: 'id_ville' });
+
+app.get('/api/artisans', async (req, res) => {
+    try {
+        const artisans = await Artisan.findAll({ include: [Categorie, Ville] });
+        res.json(artisans);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
 });
 
-// 3. LANCEMENT DU SERVEUR
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-    console.log(`Le serveur tourne sur http://localhost:${PORT}`);
-});
+app.listen(5000, () => console.log("✅ Serveur prêt sur le port 5000"));

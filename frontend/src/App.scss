@@ -1,121 +1,114 @@
-$primary: #0056b3;
-$accent: #f39200;
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
 .App {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
   background: #f4f7f6;
+  font-family: 'Segoe UI', sans-serif;
 
-  .header {
-    background: $primary;
+  .header-main {
+    background: #0b4a99;
     color: white;
-    padding: 30px 5%;
-
+    padding: 20px 0;
+    
     .header-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
       display: flex;
       align-items: center;
-      position: relative;
-      min-height: 100px;
-      margin-bottom: 30px;
 
-      .logo-btn {
-        background: none;
-        border: none;
-        padding: 0;
-        cursor: pointer;
-        z-index: 10;
-        .logo {
-          height: 100px;
-          width: auto;
-        }
+      .logo-box {
+        flex: 1;
+        // LOGO PLUS GRAND ET VISIBLE
+        .main-logo { height: 80px; width: auto; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2)); }
       }
 
-      .title {
-        position: absolute;
-        width: 100%;
-        left: 0;
+      .title-box {
+        flex: 2;
         text-align: center;
-        font-size: 2.8rem;
-        pointer-events: none;
-        margin: 0;
+        h1 { margin: 0; font-size: 2.2rem; }
       }
-    }
-
-    .filters {
-      display: flex;
-      justify-content: center;
-      gap: 15px;
-      button {
-        padding: 10px 25px;
-        border: 2px solid white;
-        background: transparent;
-        color: white;
-        border-radius: 25px;
-        font-weight: bold;
-        cursor: pointer;
-        transition: 0.3s;
-        &.active, &:hover {
-          background: $accent;
-          border-color: $accent;
-        }
-      }
+      .spacer { flex: 1; }
     }
   }
 
-  .artisan-list {
+  // STYLE BARRE DE RECHERCHE
+  .search-section {
+    max-width: 600px;
+    margin: 30px auto 10px;
+    padding: 0 20px;
+    width: 100%;
+    .search-bar {
+      width: 100%;
+      padding: 15px;
+      border-radius: 30px;
+      border: 2px solid #0b4a99;
+      font-size: 1rem;
+      outline: none;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    }
+  }
+
+  .content {
     flex: 1;
-    display: flex;         // Utilisation de Flexbox pour le centrage global
-    flex-wrap: wrap;       // Permet d'aller à la ligne
-    justify-content: center; // Centre les cartes de la dernière ligne
+    max-width: 1200px;
+    margin: 30px auto;
+    padding: 0 20px;
+    width: 100%;
+  }
+
+  .artisan-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
     gap: 30px;
-    padding: 50px 5%;
   }
 
   .artisan-card {
     background: white;
-    width: 350px;          
-    padding: 30px;
-    border-radius: 20px;
-    box-shadow: 0 10px 20px rgba(0,0,0,0.08);
-    text-align: center;
-    border-top: 6px solid $primary;
-    transition: transform 0.3s ease;
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
 
-    &:hover { transform: translateY(-5px); }
-
-    h3 { color: $primary; margin-bottom: 12px; font-size: 1.6rem; }
-    .city { font-weight: bold; color: #d32f2f; margin-bottom: 15px; }
-    .description { color: #555; line-height: 1.6; margin-bottom: 25px; height: 60px; overflow: hidden; }
-    
-    .contact-btn {
-      background: $accent;
+    .card-top {
+      background: #0b4a99;
       color: white;
-      border: none;
-      padding: 14px;
-      border-radius: 10px;
-      width: 100%;
-      font-weight: bold;
-      cursor: pointer;
-      font-size: 1.1rem;
-      &:hover { background: darken($accent, 5%); }
+      padding: 25px;
+      text-align: center;
+      h2 { margin: 0 0 10px 0; font-size: 1.5rem; }
+      .badge { 
+        background: rgba(255,255,255,0.25); 
+        padding: 5px 15px; 
+        border-radius: 20px; 
+        font-size: 0.8rem;
+        font-weight: bold;
+      }
+    }
+
+    .card-body {
+      padding: 25px;
+      text-align: center;
+      flex: 1;
+      .location { font-weight: bold; color: #cc3333; margin-bottom: 10px; }
+      .description { color: #666; margin-bottom: 20px; font-size: 0.95rem; line-height: 1.4; }
+      
+      // BOUTON CLIQUABLE
+      .btn-contact { 
+        background: #0b4a99; color: white; border: none; 
+        padding: 14px; border-radius: 8px; width: 100%; 
+        font-weight: bold; cursor: pointer;
+        transition: 0.3s;
+        &:hover { background: #083a75; transform: scale(1.02); }
+      }
     }
   }
 
-  .footer {
-    background: $primary;
+  .footer-blue {
+    background: #0b4a99;
     color: white;
-    padding: 40px;
+    padding: 30px 0;
     text-align: center;
-    .footer-links {
-      margin-top: 15px;
-      a { color: white; margin: 0 15px; text-decoration: none; opacity: 0.8; &:hover { opacity: 1; text-decoration: underline; } }
-    }
+    .footer-links a { color: white; margin: 0 10px; text-decoration: none; opacity: 0.8; }
   }
 }

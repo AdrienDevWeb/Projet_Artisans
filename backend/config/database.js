@@ -1,20 +1,16 @@
 const { Sequelize } = require('sequelize');
 
-// Remplace les valeurs entre guillemets par tes infos Alwaysdata
-const sequelize = new Sequelize('ton_nom_db', 'ton_utilisateur', 'ton_mot_de_passe', {
-  host: 'mysql-artisans.alwaysdata.net', // C'est l'hôte fourni par Alwaysdata
+const sequelize = new Sequelize('artisans_db', 'artisans', 'Hajimenoippo67!!!', {
+  host: 'mysql-artisans.alwaysdata.net',
   dialect: 'mysql',
   logging: false,
 });
 
-async function testConnection() {
-  try {
-    await sequelize.authenticate();
-    console.log('✅ Connexion MySQL Alwaysdata réussie !');
-  } catch (error) {
-    console.error('❌ Erreur de connexion :', error);
-  }
+// Test immédiat de l'objet avant export
+if (typeof sequelize.define !== 'function') {
+  console.error("❌ Erreur critique : Sequelize n'est pas correctement initialisé !");
+} else {
+  console.log("✅ Instance Sequelize prête à l'export.");
 }
-testConnection();
 
 module.exports = sequelize;
